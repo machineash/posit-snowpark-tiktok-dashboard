@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Env / secrets
+.env
+*.pem
+
+# OS
+.DS_Store
+
+# Raw data exports (not committed — contains account-identifying data)
+*.csv
