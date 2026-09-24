@@ -27,8 +27,9 @@ Shiny for Python dashboard  ──▶  Docker container  ──▶  Snowpark Con
 - [x] **Phase 1 — data pipeline**: TikTok video data (views, likes, comments,
       shares, saves, post date) scraped and loaded into Snowflake;
       1,000 rows in `tiktok_videos`.
-- [ ] **Phase 2 — dashboard**: Shiny for Python app visualizing engagement
-      trends, top posts, and organic vs. sponsored performance.
+- [x] **Phase 2 — dashboard**: Shiny for Python app (`app.py`) visualizing
+      engagement trends, top posts, organic vs. sponsored performance, and
+      duration vs. performance — querying Snowflake live via `db.py`.
 - [ ] **Phase 3 — deploy**: containerize and deploy via Snowpark Container
       Services (compute pool, external access integration).
 - [ ] **Phase 4 — docs**: architecture diagram, partner-style deployment
@@ -41,6 +42,30 @@ Shiny for Python dashboard  ──▶  Docker container  ──▶  Snowpark Con
 | `01_create_tables.sql` | Creates `tiktok_raw` (raw scraper schema) and `tiktok_videos` (clean, analysis-ready schema) |
 | `02_load_raw.sql` | File format + load notes for getting the scraped CSV into `tiktok_raw` |
 | `03_transform_to_clean.sql` | Transforms `tiktok_raw` → `tiktok_videos` |
+
+## Dashboard (`app.py`)
+
+Shiny for Python app, connecting live to Snowflake (no local data copy).
+
+- **Engagement over time** — weekly views/likes/comments/shares/saves trend
+- **Top posts** — `video_id`, `post_date`, and metrics only (no `caption`,
+  no `cover_url` — excluded at the SQL query level in `db.py`, never
+  pulled into the app)
+- **Organic vs. sponsored** — average metrics split by `is_sponsored`/`is_ad`
+- **Duration vs. performance** — avg. views binned by `duration_secs`
+- **Sidebar filters** — date range, sponsored/organic toggle
+
+### Running it locally
+
+```bash
+pip install -r requirements.txt
+cp .env.example .env   # fill in your Snowflake credentials
+shiny run app.py
+```
+
+Credentials are read from environment variables (via `python-dotenv` in
+dev); `db.py` will need no changes when Phase 3 sets them as container
+secrets instead.
 
 ## Data source
 

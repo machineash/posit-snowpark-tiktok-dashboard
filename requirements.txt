@@ -1,0 +1,6 @@
+shiny
+shinywidgets
+snowflake-connector-python[pandas]
+pandas
+plotly
+python-dotenv
