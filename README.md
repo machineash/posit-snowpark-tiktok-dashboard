@@ -22,6 +22,11 @@ Snowflake: tiktok_videos       (14 cols, analysis-ready)
 Shiny for Python dashboard  ──▶  Docker container  ──▶  Snowpark Container Services
 ```
 
+`db.py` reads Snowflake credentials from environment variables the same
+way in all three of: local `.env` (Phase 2), plain `docker run`, and the
+deployed Snowpark Container Services service (Phase 3, credentials as
+Snowflake Secrets) — no code branches on where it's running.
+
 ## Status
 
 - [x] **Phase 1 — data pipeline**: TikTok video data (views, likes, comments,
@@ -30,8 +35,9 @@ Shiny for Python dashboard  ──▶  Docker container  ──▶  Snowpark Con
 - [x] **Phase 2 — dashboard**: Shiny for Python app (`app.py`) visualizing
       engagement trends, top posts, organic vs. sponsored performance, and
       duration vs. performance — querying Snowflake live via `db.py`.
-- [ ] **Phase 3 — deploy**: containerize and deploy via Snowpark Container
-      Services (compute pool, external access integration).
+- [x] **Phase 3 — deploy**: `Dockerfile` + `deploy/` scripts for image
+      repository, compute pool, secrets, service spec, and service
+      creation on Snowpark Container Services. See "Deployment" below.
 - [ ] **Phase 4 — docs**: architecture diagram, partner-style deployment
       writeup.
 
@@ -66,6 +72,27 @@ shiny run app.py
 Credentials are read from environment variables (via `python-dotenv` in
 dev); `db.py` will need no changes when Phase 3 sets them as container
 secrets instead.
+
+**Known issue:** live queries and filters are confirmed working end to
+end against real Snowflake data, but chart card sizing still needs a
+polish pass — plots render slightly cramped in some viewport sizes.
+Functionality isn't affected; tracked as an open follow-up.
+
+## Deployment (`/deploy`)
+
+Containerized and deployed to Snowpark Container Services — see
+`deploy/README.md` for the full walkthrough (image repository, compute
+pool, credentials as Snowflake Secrets, service spec, and bringing the
+service up), plus what to check if the service doesn't start.
+
+| File | What it does |
+|---|---|
+| `Dockerfile` | Builds the dashboard image; runs `shiny run app.py` on port 8000 |
+| `deploy/01_image_repository.sql` | Creates the Snowflake image repository |
+| `deploy/02_compute_pool.sql` | Creates the compute pool the service runs on |
+| `deploy/03_secrets.sql` | Stores Snowflake credentials as Secrets (no password in the image) |
+| `deploy/service_spec.yaml` | Container spec: image, env vars, injected secrets, exposed port |
+| `deploy/04_create_service.sql` | Stages the spec and creates/checks the running service |
 
 ## Data source
 

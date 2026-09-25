@@ -1,0 +1,28 @@
+# Phase 3, step 4: service spec
+# Tells Snowpark Container Services what to run, what env vars/secrets to
+# inject, and what port to expose. Fill in the image path after pushing
+# (see deploy/README.md), and the plain (non-secret) connection settings
+# below to match your account.
+
+spec:
+  containers:
+    - name: tiktok-dashboard
+      image: /tiktok_dashboard/public/tiktok_dashboard_repo/tiktok-dashboard:latest
+      env:
+        SNOWFLAKE_ACCOUNT: "your_account_identifier"     # e.g. ymkgmrw-yo50913
+        SNOWFLAKE_WAREHOUSE: "COMPUTE_WH"
+        SNOWFLAKE_DATABASE: "TIKTOK_DASHBOARD"
+        SNOWFLAKE_SCHEMA: "PUBLIC"
+        SNOWFLAKE_ROLE: "ACCOUNTADMIN"
+      secrets:
+        - snowflakeSecret: tiktok_dashboard_user
+          envVarName: SNOWFLAKE_USER
+        - snowflakeSecret: tiktok_dashboard_password
+          envVarName: SNOWFLAKE_PASSWORD
+      readinessProbe:
+        port: 8000
+        path: /
+  endpoints:
+    - name: dashboard
+      port: 8000
+      public: true
