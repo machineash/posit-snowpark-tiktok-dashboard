@@ -1,26 +1,17 @@
--- Phase 1: load the scraped TikTok CSV export into tiktok_raw.
---
--- Source: Apify clockworks/tiktok-scraper (profile export, 1,000 most
--- recent videos), exported as CSV.
---
--- Loaded via Snowsight's "Load Data into Table" wizard rather than a
--- manual PUT/COPY, since the wizard handles the file upload + staging
--- in one step. The file format below mirrors what the wizard generates
--- for a standard comma-delimited export with a header row.
+-- Phase 1: load ingest/videos.json into tiktok_raw
+USE DATABASE TIKTOK_DASHBOARD;
+USE SCHEMA PUBLIC;
 
-CREATE OR REPLACE FILE FORMAT "TIKTOK_DASHBOARD"."PUBLIC".tiktok_csv_format
-    TYPE = CSV
-    SKIP_HEADER = 1
-    FIELD_DELIMITER = ','
-    TRIM_SPACE = TRUE
-    FIELD_OPTIONALLY_ENCLOSED_BY = '"'
-    REPLACE_INVALID_CHARACTERS = TRUE
-    DATE_FORMAT = AUTO
-    TIME_FORMAT = AUTO
-    TIMESTAMP_FORMAT = AUTO;
+CREATE OR REPLACE FILE FORMAT tiktok_json_format
+    TYPE = 'JSON'
+    STRIP_OUTER_ARRAY = TRUE;
 
--- Load happens via Snowsight's UI wizard (Home > Upload local files),
--- targeting the existing tiktok_raw table so column names/types are
--- already defined and the wizard just matches by name.
---
--- Result: 1,000 rows loaded successfully.
+CREATE OR REPLACE STAGE tiktok_ingest_stage
+    FILE_FORMAT = tiktok_json_format;
+
+-- Run via SnowSQL or Snowflake CLI from the repo root:
+-- PUT file://ingest/videos.json @tiktok_ingest_stage AUTO_COMPRESS=TRUE OVERWRITE=TRUE;
+
+COPY INTO "TIKTOK_DASHBOARD"."PUBLIC"."tiktok_raw" (raw_data)
+FROM @tiktok_ingest_stage/videos.json.gz
+FILE_FORMAT = (FORMAT_NAME = tiktok_json_format);

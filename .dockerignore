@@ -9,3 +9,7 @@ venv/
 *.csv
 README.md
 sql/
+
+**/tokens.json
+**/videos.json
+ingest/

@@ -9,7 +9,7 @@ spec:
     - name: tiktok-dashboard
       image: /tiktok_dashboard/public/tiktok_dashboard_repo/tiktok-dashboard:latest
       env:
-        SNOWFLAKE_ACCOUNT: "your_account_identifier"     # e.g. ymkgmrw-yo50913
+        SNOWFLAKE_ACCOUNT: "your_account_identifier"     # e.g. orgname-accountname
         SNOWFLAKE_WAREHOUSE: "COMPUTE_WH"
         SNOWFLAKE_DATABASE: "TIKTOK_DASHBOARD"
         SNOWFLAKE_SCHEMA: "PUBLIC"

@@ -13,3 +13,10 @@ venv/
 
 # Raw data exports (not committed — contains account-identifying data)
 *.csv
+
+# TikTok OAuth tokens & local exports
+**/tokens.json
+**/videos.json
+*.csv
+
+.vscode/
