@@ -1,4 +1,4 @@
-# posit-snowpark-tiktok-dashboard
+﻿# posit-snowpark-tiktok-dashboard
 A Shiny for Python dashboard, deployed via Snowflake's Snowpark Container Services, built on real TikTok engagement data (285K followers, up to 2,000 most recent videos).
 
 Built to get hands-on with Snowflake and Snowpark Container Services, and to work with a real Posit product (Shiny for Python) end to end.
@@ -79,7 +79,7 @@ Credentials are read from environment variables (via `python-dotenv` in dev); `d
 
 ## Deployment (`/deploy`)
 
-Containerized and deployed to Snowpark Container Services — see `deploy/README.md` for the full walkthrough (image repository, compute pool, credentials as Snowflake Secrets, service spec, and bringing the service up), plus what to check if the service doesn't start.
+Containerized and deployed to Snowpark Container Services, plus what to check if the service doesn't start.
 
 | File | What it does |
 | :--- | :--- |
